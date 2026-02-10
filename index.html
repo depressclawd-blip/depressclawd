@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DepressClawd</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=JetBrains+Mono:wght@400;500&family=Metal+Mania&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="wallet-gate" class="wallet-gate">
+      <div class="wallet-gate-frame">
+        <header class="wallet-gate-header">
+          <span class="wallet-gate-dot"></span>
+          <span class="wallet-gate-title">CHECKPOINT</span>
+          <span class="wallet-gate-step">STEP 1/2</span>
+        </header>
+        <div class="wallet-gate-body">
+          <div class="wallet-gate-block wallet-gate-block--main">
+            <p class="wallet-gate-line"><span class="wallet-gate-check">✓</span> HUMAN VERIFIED</p>
+            <p class="wallet-gate-line">Connect your Solana wallet to continue.</p>
+            <button type="button" class="wallet-gate-btn" id="btn-connect-wallet">[ CONNECT WALLET ]</button>
+          </div>
+          <div class="wallet-gate-block wallet-gate-block--error hidden" id="wallet-error-block">
+            <p class="wallet-gate-line wallet-gate-line--error"><span class="wallet-gate-warn">⚠</span> <strong id="wallet-error-title">SIGNATURE CANCELLED</strong></p>
+            <p class="wallet-gate-line wallet-gate-line--error" id="wallet-error-msg">You cancelled the signature request.</p>
+            <p class="wallet-gate-line wallet-gate-line--error">→ Click 'Connect Wallet' to try again.</p>
+            <button type="button" class="wallet-gate-btn wallet-gate-btn--error" id="btn-try-again">[ TRY AGAIN ]</button>
+          </div>
+          <p class="wallet-gate-hint hidden" id="wallet-no-wallet">No Solana wallet detected. Install <a href="https://phantom.app/" target="_blank" rel="noopener">Phantom</a> or another Solana wallet.</p>
+        </div>
+        <footer class="wallet-gate-footer">
+          <span>DEPRESSCLAWD</span>
+          <span class="wallet-gate-wallet" id="wallet-address"></span>
+        </footer>
+      </div>
+    </div>
+    <div id="loader" class="loader hidden" aria-live="polite">
+      <div class="loader-inner">
+        <pre class="loader-output" id="loader-output"></pre>
+        <span class="loader-cursor" id="loader-cursor">_</span>
+      </div>
+    </div>
+    <div id="app" class="app-hidden dashboard-app">
+      <header class="dashboard-topbar">
+        <div class="dashboard-topbar-left">
+          <span>DEPRESSCLAWD</span>
+        </div>
+        <div class="dashboard-topbar-right">
+          <span class="dashboard-topbar-check">✓</span>
+          <span class="dashboard-topbar-wallet" id="dashboard-wallet-address">WALLET: —</span>
+          <span class="dashboard-topbar-time" id="mac-time">00:00:00</span>
+        </div>
+      </header>
+
+      <main class="dashboard-main">
+        <div class="dashboard-center">
+          <h1 class="dashboard-logo">Depress<span class="accent">Clawd</span></h1>
+        </div>
+      </main>
+
+      <nav class="dashboard-dock">
+        <button type="button" class="dashboard-dock-icon dashboard-dock-icon--with-svg" id="dock-blueprint" data-tooltip="Blueprint">
+          <svg class="dashboard-dock-blueprint-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </button>
+        <button type="button" class="dashboard-dock-icon dashboard-dock-icon--with-svg" id="dock-roadmap" data-tooltip="Roadmap">
+          <svg class="dashboard-dock-roadmap-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+            <line x1="8" y1="2" x2="8" y2="18"/>
+            <line x1="16" y1="6" x2="16" y2="22"/>
+          </svg>
+        </button>
+        <button type="button" class="dashboard-dock-icon dashboard-dock-icon--symbol" id="dock-task" data-tooltip="Task">▤</button>
+        <button type="button" class="dashboard-dock-icon dashboard-dock-icon--symbol" id="dock-mint" data-tooltip="Mint">◇</button>
+        <button type="button" class="dashboard-dock-icon dashboard-dock-icon--symbol" id="dock-apply" data-tooltip="Apply">✓</button>
+        <a href="https://x.com/i/communities/2021293645304050108" target="_blank" rel="noopener noreferrer" class="dashboard-dock-icon dashboard-dock-icon--with-svg" data-tooltip="X Community" aria-label="DepressClawd Community on X">
+          <svg class="dashboard-dock-community-logo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+          </svg>
+        </a>
+        <a href="https://x.com/DepressClawd" target="_blank" rel="noopener noreferrer" class="dashboard-dock-icon dashboard-dock-icon--with-svg" data-tooltip="X (Twitter)" aria-label="DepressClawd on X">
+          <svg class="dashboard-dock-x-logo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        </a>
+        <button type="button" class="dashboard-dock-icon dashboard-dock-icon--logout" id="dock-logout" data-tooltip="Logout">⎋</button>
+      </nav>
+
+      <div id="roadmap-window" class="task-window" aria-hidden="true">
+        <div class="task-window-titlebar" id="roadmap-titlebar">
+          <div class="task-window-controls">
+            <button type="button" class="task-window-btn task-window-btn--close" id="roadmap-close" aria-label="Close"></button>
+            <button type="button" class="task-window-btn task-window-btn--minimize" id="roadmap-minimize" aria-label="Minimize"></button>
+            <button type="button" class="task-window-btn task-window-btn--maximize" id="roadmap-maximize" aria-label="Maximize"></button>
+          </div>
+          <span class="task-window-title">ROADMAP</span>
+        </div>
+        <div class="task-window-content">
+          <ul class="roadmap-list">
+            <li class="roadmap-phase">
+              <span class="roadmap-phase-num">Phase 1</span>
+              <span class="roadmap-phase-desc">X, Website LIVE</span>
+            </li>
+            <li class="roadmap-phase">
+              <span class="roadmap-phase-num">Phase 2</span>
+              <span class="roadmap-phase-desc">Minting</span>
+            </li>
+            <li class="roadmap-phase">
+              <span class="roadmap-phase-num">Phase 3</span>
+              <span class="roadmap-phase-desc">…</span>
+            </li>
+            <li class="roadmap-phase">
+              <span class="roadmap-phase-num">Phase 4</span>
+              <span class="roadmap-phase-desc">Airdrop for the Holder [ Base on Rarity ]</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="task-window" class="task-window" aria-hidden="true">
+        <div class="task-window-titlebar" id="task-titlebar">
+          <div class="task-window-controls">
+            <button type="button" class="task-window-btn task-window-btn--close" id="task-close" aria-label="Close"></button>
+            <button type="button" class="task-window-btn task-window-btn--minimize" id="task-minimize" aria-label="Minimize"></button>
+            <button type="button" class="task-window-btn task-window-btn--maximize" id="task-maximize" aria-label="Maximize"></button>
+          </div>
+          <span class="task-window-title">TASK</span>
+        </div>
+        <div class="task-window-content">
+          <ul class="task-window-list task-list">
+            <li class="task-window-list-item task-list-item"><span class="task-list-num">Task 1</span> <span class="task-list-desc">Follow @DepressClawd</span></li>
+            <li class="task-window-list-item task-list-item"><span class="task-list-num">Task 2</span> <span class="task-list-desc">Engage</span></li>
+            <li class="task-window-list-item task-list-item"><span class="task-list-num">Task 3</span> <span class="task-list-desc">…</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="mint-window" class="task-window" aria-hidden="true">
+        <div class="task-window-titlebar" id="mint-titlebar">
+          <div class="task-window-controls">
+            <button type="button" class="task-window-btn task-window-btn--close" id="mint-close" aria-label="Close"></button>
+            <button type="button" class="task-window-btn task-window-btn--minimize" id="mint-minimize" aria-label="Minimize"></button>
+            <button type="button" class="task-window-btn task-window-btn--maximize" id="mint-maximize" aria-label="Maximize"></button>
+          </div>
+          <span class="task-window-title">MINT</span>
+        </div>
+        <div class="task-window-content">
+          <ul class="mint-info">
+            <li class="mint-info-row"><span class="mint-info-label">Supply</span> <span class="mint-info-value">1111</span></li>
+            <li class="mint-info-row"><span class="mint-info-label">Network</span> <span class="mint-info-value">Solana</span></li>
+            <li class="mint-info-row"><span class="mint-info-label">Price</span> <span class="mint-info-value">Freemint</span></li>
+            <li class="mint-info-row"><span class="mint-info-label">Launchpad</span> <span class="mint-info-value">…</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="apply-window" class="task-window" aria-hidden="true">
+        <div class="task-window-titlebar" id="apply-titlebar">
+          <div class="task-window-controls">
+            <button type="button" class="task-window-btn task-window-btn--close" id="apply-close" aria-label="Close"></button>
+            <button type="button" class="task-window-btn task-window-btn--minimize" id="apply-minimize" aria-label="Minimize"></button>
+            <button type="button" class="task-window-btn task-window-btn--maximize" id="apply-maximize" aria-label="Maximize"></button>
+          </div>
+          <span class="task-window-title">APPLY</span>
+        </div>
+        <div class="task-window-content">
+          <p class="task-window-label">Submit for minting</p>
+          <form class="apply-form" id="apply-form">
+            <label class="apply-field">
+              <span class="apply-label">Solana Wallet :</span>
+              <input type="text" class="apply-input" id="apply-wallet" placeholder="Wallet address" readonly />
+            </label>
+            <label class="apply-field">
+              <span class="apply-label">X Username :</span>
+              <input type="text" class="apply-input" id="apply-x-username" placeholder="@username" />
+            </label>
+            <button type="submit" class="apply-submit" id="apply-submit">[ SUBMIT ]</button>
+            <p class="apply-msg apply-msg--hidden" id="apply-msg" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+
+      <div id="blueprint-window" class="task-window" aria-hidden="true">
+        <div class="task-window-titlebar" id="blueprint-titlebar">
+          <div class="task-window-controls">
+            <button type="button" class="task-window-btn task-window-btn--close" id="blueprint-close" aria-label="Close"></button>
+            <button type="button" class="task-window-btn task-window-btn--minimize" id="blueprint-minimize" aria-label="Minimize"></button>
+            <button type="button" class="task-window-btn task-window-btn--maximize" id="blueprint-maximize" aria-label="Maximize"></button>
+          </div>
+          <span class="task-window-title">BLUEPRINT</span>
+        </div>
+        <div class="task-window-content">
+          <p class="task-window-label">NFT Assets &amp; Rarity</p>
+          <ul class="task-window-list blueprint-assets">
+            <li class="task-window-list-item blueprint-asset">
+              <button type="button" class="blueprint-asset-row"><span class="blueprint-asset-name">Background</span><span class="blueprint-asset-chevron">▼</span></button>
+              <ul class="blueprint-rarities">
+                <li class="blueprint-rarity blueprint-rarity--common blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Common</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/background/common/BGC1.png" alt="BGC1" class="blueprint-bg-thumb" />
+                    <img src="/background/common/BGC2.png" alt="BGC2" class="blueprint-bg-thumb" />
+                    <img src="/background/common/BGC3.png" alt="BGC3" class="blueprint-bg-thumb" />
+                    <img src="/background/common/BGC4.png" alt="BGC4" class="blueprint-bg-thumb" />
+                    <img src="/background/common/BGC5.png" alt="BGC5" class="blueprint-bg-thumb" />
+                    <img src="/background/common/BGC6.png" alt="BGC6" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+                <li class="blueprint-rarity blueprint-rarity--uncommon blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Uncommon</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/background/uncommon/BGU1.png" alt="BGU1" class="blueprint-bg-thumb" />
+                    <img src="/background/uncommon/BGU2.png" alt="BGU2" class="blueprint-bg-thumb" />
+                    <img src="/background/uncommon/BGU3.png" alt="BGU3" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+                <li class="blueprint-rarity blueprint-rarity--rare blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Rare</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/background/rare/BGR1.png" alt="BGR1" class="blueprint-bg-thumb" />
+                    <img src="/background/rare/BGR2.png" alt="BGR2" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+                <li class="blueprint-rarity blueprint-rarity--epic blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Epic</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/background/epic/BGE1.png" alt="BGE1" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+                <li class="blueprint-rarity blueprint-rarity--legendary blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Legendary</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/background/legendary/BGL1.png" alt="BGL1" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+              </ul>
+            </li>
+            <li class="task-window-list-item blueprint-asset">
+              <button type="button" class="blueprint-asset-row"><span class="blueprint-asset-name">Body</span><span class="blueprint-asset-chevron">▼</span></button>
+              <ul class="blueprint-rarities">
+                <li class="blueprint-rarity blueprint-rarity--common blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Common</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/body/common/BC1.png" alt="BC1" class="blueprint-bg-thumb" />
+                    <img src="/body/common/BC2.png" alt="BC2" class="blueprint-bg-thumb" />
+                    <img src="/body/common/BC3.png" alt="BC3" class="blueprint-bg-thumb" />
+                    <img src="/body/common/BC4.png" alt="BC4" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+                <li class="blueprint-rarity blueprint-rarity--uncommon blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Uncommon</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/body/uncommon/BU1.png" alt="BU1" class="blueprint-bg-thumb" />
+                    <img src="/body/uncommon/BU2.png" alt="BU2" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+                <li class="blueprint-rarity blueprint-rarity--rare blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Rare</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/body/rare/BR1.png" alt="BR1" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+                <li class="blueprint-rarity blueprint-rarity--mythic blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Mythic</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/body/mythic/BM1.png" alt="BM1" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+              </ul>
+            </li>
+            <li class="task-window-list-item blueprint-asset">
+              <button type="button" class="blueprint-asset-row"><span class="blueprint-asset-name">Head</span><span class="blueprint-asset-chevron">▼</span></button>
+              <ul class="blueprint-rarities">
+                <li class="blueprint-rarity blueprint-rarity--common blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Common</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/head/common/H1.png" alt="H1" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+              </ul>
+            </li>
+            <li class="task-window-list-item blueprint-asset">
+              <button type="button" class="blueprint-asset-row"><span class="blueprint-asset-name">Eye</span><span class="blueprint-asset-chevron">▼</span></button>
+              <ul class="blueprint-rarities">
+                <li class="blueprint-rarity blueprint-rarity--common blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Common</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/eye/common/MC1.png" alt="MC1" class="blueprint-bg-thumb" />
+                    <img src="/eye/common/MC2.png" alt="MC2" class="blueprint-bg-thumb" />
+                    <img src="/eye/common/MC3.png" alt="MC3" class="blueprint-bg-thumb" />
+                    <img src="/eye/common/MC4.png" alt="MC4" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+                <li class="blueprint-rarity blueprint-rarity--rare blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Rare</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/eye/rare/MR1.png" alt="MR1" class="blueprint-bg-thumb" />
+                    <img src="/eye/rare/MR2.png" alt="MR2" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+                <li class="blueprint-rarity blueprint-rarity--epic blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Epic</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/eye/epic/ME1.png" alt="ME1" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+                <li class="blueprint-rarity blueprint-rarity--legendary blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Legendary</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/eye/legendary/ML1.png" alt="ML1" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+              </ul>
+            </li>
+            <li class="task-window-list-item blueprint-asset">
+              <button type="button" class="blueprint-asset-row"><span class="blueprint-asset-name">Mouth</span><span class="blueprint-asset-chevron">▼</span></button>
+              <ul class="blueprint-rarities">
+                <li class="blueprint-rarity blueprint-rarity--common blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Common</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/mouth/common/MC1.png" alt="MC1" class="blueprint-bg-thumb" />
+                    <img src="/mouth/common/MC2.png" alt="MC2" class="blueprint-bg-thumb" />
+                    <img src="/mouth/common/MC3.png" alt="MC3" class="blueprint-bg-thumb" />
+                    <img src="/mouth/common/MC4.png" alt="MC4" class="blueprint-bg-thumb" />
+                    <img src="/mouth/common/MC5.png" alt="MC5" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+                <li class="blueprint-rarity blueprint-rarity--uncommon blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Uncommon</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/mouth/uncommon/MU1.png" alt="MU1" class="blueprint-bg-thumb" />
+                    <img src="/mouth/uncommon/MU2.png" alt="MU2" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+                <li class="blueprint-rarity blueprint-rarity--rare blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Rare</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/mouth/rare/MR1.png" alt="MR1" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+                <li class="blueprint-rarity blueprint-rarity--epic blueprint-rarity--expandable">
+                  <button type="button" class="blueprint-rarity-toggle-btn" aria-expanded="false">
+                    <span class="blueprint-rarity-label">Epic</span>
+                    <span class="blueprint-rarity-chevron">▼</span>
+                  </button>
+                  <div class="blueprint-bg-list" hidden>
+                    <img src="/mouth/epic/ME1.png" alt="ME1" class="blueprint-bg-thumb" />
+                  </div>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
