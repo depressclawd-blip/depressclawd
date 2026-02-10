@@ -29,6 +29,6 @@ npm run preview
 - `index.html` — struktur halaman (header, hero, sections, footer)
 - `src/main.js` — parallax mouse, scroll reveal
 - `src/style.css` — variabel, layout, kartu, tombol
-- `public/favicon.svg` — favicon
+- `public/dc.jpg` — favicon
 
 Edit teks, warna di `:root` di `style.css`, dan konten di `index.html` sesuai kebutuhan.
